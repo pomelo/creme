@@ -10,6 +10,7 @@ from .__version__ import __version__
 
 from . import anomaly
 from . import base
+from . import change_detectors
 from . import cluster
 from . import compat
 from . import compose
@@ -45,6 +46,7 @@ from . import utils
 __all__ = [
     'anomaly',
     'base',
+    'change_detectors',
     'cluster',
     'compat',
     'compose',
