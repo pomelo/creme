@@ -82,7 +82,7 @@ class LearningNodeMean(LearningNode):
             Total weight seen.
 
         """
-        return self.stats.mean.n
+        return self.stats.mean_samples
 
     def calculate_promise(self) -> int:
         """Estimate how likely a leaf node is going to be split.
@@ -173,7 +173,7 @@ class LearningNodeAdaptive(LearningNodeModel):
         self._fmse_model = 0.0
 
     def learn_one(self, x, y, *, sample_weight=1.0, tree=None):
-        pred_mean = self.stats.mean.get()
+        pred_mean = self.stats.mean
         pred_model = self._leaf_model.predict_one(x)
 
         self._fmse_mean = tree.model_selector_decay * self._fmse_mean + (y - pred_mean) ** 2
@@ -183,6 +183,6 @@ class LearningNodeAdaptive(LearningNodeModel):
 
     def leaf_prediction(self, x, *, tree=None):
         if self._fmse_mean < self._fmse_model:  # Act as a regression tree
-            return self.stats.mean.get()
+            return self.stats.mean
         else:  # Act as a model tree
             return super().leaf_prediction(x)

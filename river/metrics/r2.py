@@ -69,9 +69,9 @@ class R2(base.RegressionMetric):
         return self
 
     def get(self):
-        if self._y_var.mean.n > 1:
+        if self._y_var.mean_samples > 1:
             try:
-                total_sum_of_squares = (self._y_var.mean.n - 1) * self._y_var.get()
+                total_sum_of_squares = (self._y_var.mean_samples - 1) * self._y_var.get()
                 return 1 - (self._residual_sum_of_squares / total_sum_of_squares)
             except ZeroDivisionError:
                 return 0.0

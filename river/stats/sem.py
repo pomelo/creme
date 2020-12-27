@@ -39,7 +39,8 @@ class SEM(var.Var):
     """
 
     def get(self):
-        return (super().get() / self.mean.n) ** 0.5
+        # return (super().get() / self.mean.n) ** 0.5
+        return (super().get() / super().mean_samples) ** 0.5
 
 
 class RollingSEM(var.RollingVar):
