@@ -1098,7 +1098,7 @@ class ForestMemberRegressor(BaseForestMember, base.Regressor):
         drift_input = y_true - y_pred
         self._var.update(drift_input)
 
-        if self._var.mean.n == 1:
+        if self._var.mean_samples == 1:
             return 0.5  # The expected error is the normalized mean error
 
         sd = math.sqrt(self._var.sigma)

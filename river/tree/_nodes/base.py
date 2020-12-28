@@ -5,12 +5,10 @@ import textwrap
 
 from typing import Dict, Iterator, List, Union
 
-
 from river import base
 from river.stats import Var
 from river.tree._attribute_test import InstanceConditionalTest  # noqa
 from river.tree._attribute_test import AttributeSplitSuggestion  # noqa
-
 
 # Helper structure to manage nodes
 FoundNode = collections.namedtuple("FoundNode", ["node", "parent", "parent_branch"])
@@ -143,7 +141,7 @@ class Node(metaclass=ABCMeta):
             # Multi-target regression case
             if isinstance(tree, base.MultiOutputMixin):
                 for i, (target_id, var) in enumerate(self.stats.items()):
-                    text += f"{target_id}: {self.stats[target_id].mean} | {self.stats[target_id]}"
+                    text += f"{target_id}: {self.stats[target_id].mean_value} | {self.stats[target_id]}"
                     text += ", " if i < len(self.stats) - 1 else ""
             else:  # Single-target regression
                 text += f"{self.stats.mean} | {self.stats}"
@@ -434,7 +432,7 @@ class LearningNode(Node, metaclass=ABCMeta):
                 obs = self.attribute_observers[attr_idx]
             except KeyError:
                 if (
-                    nominal_attributes is not None and attr_idx in nominal_attributes
+                        nominal_attributes is not None and attr_idx in nominal_attributes
                 ) or not isinstance(attr_val, numbers.Number):
                     obs = self.new_nominal_attribute_observer()
                 else:
