@@ -1,5 +1,3 @@
-import copy
-
 from . import base
 from . import mean
 

@@ -1,7 +1,3 @@
-import math
-
-from .. import stats
-
 from . import base
 from .gaussianc import GaussianC
 
