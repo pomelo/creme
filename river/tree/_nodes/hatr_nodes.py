@@ -300,7 +300,7 @@ class AdaSplitNodeRegressor(SplitNode, AdaNode):
     def leaf_prediction(self, x, *, tree=None):
         # Called in case an emerging categorical feature has no path down the split node to be
         # sorted
-        return self.stats.mean.get()
+        return self.stats.mean
 
     # Override AdaNode
     def kill_tree_children(self, tree):
