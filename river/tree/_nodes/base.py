@@ -5,10 +5,12 @@ import textwrap
 
 from typing import Dict, Iterator, List, Union
 
+
 from river import base
 from river.stats import Var
 from river.tree._attribute_test import InstanceConditionalTest  # noqa
 from river.tree._attribute_test import AttributeSplitSuggestion  # noqa
+
 
 # Helper structure to manage nodes
 FoundNode = collections.namedtuple("FoundNode", ["node", "parent", "parent_branch"])
@@ -432,7 +434,7 @@ class LearningNode(Node, metaclass=ABCMeta):
                 obs = self.attribute_observers[attr_idx]
             except KeyError:
                 if (
-                        nominal_attributes is not None and attr_idx in nominal_attributes
+                    nominal_attributes is not None and attr_idx in nominal_attributes
                 ) or not isinstance(attr_val, numbers.Number):
                     obs = self.new_nominal_attribute_observer()
                 else:
