@@ -1,7 +1,7 @@
-import copy
-
 from . import base
 from . import summing
+
+from .mean_c import MeanC
 
 
 class Mean(base.Univariate):
@@ -9,11 +9,8 @@ class Mean(base.Univariate):
 
     Attributes
     ----------
-    mean : float
-        The current value of the mean.
-    n : float
-        The current sum of weights. If each passed weight was 1, then this is equal to the number
-        of seen observations.
+    _helper : MeanC
+        The helper class for calculation of running mean.
 
     Examples
     --------
@@ -40,55 +37,45 @@ class Mean(base.Univariate):
     """
 
     def __init__(self):
-        self.n = 0
-        self.mean = 0.0
+        self._helper = MeanC()
 
     def update(self, x, w=1.0):
-        self.n += w
-        if self.n > 0:
-            self.mean += w * (x - self.mean) / self.n
+        self._helper.update(x, w)
         return self
 
     def revert(self, x, w=1.0):
-        self.n -= w
-        if self.n < 0:
-            raise ValueError("Cannot go below 0")
-        elif self.n == 0:
-            self.mean = 0.0
-        else:
-            self.mean -= w * (x - self.mean) / self.n
+        self._helper.revert(x, w)
         return self
 
     def get(self):
-        return self.mean
+        return self._helper.get()
+
+    @property
+    def n(self):
+        return self._helper.get_n()
+
+    @property
+    def mean(self):
+        return self._helper.get()
 
     def __iadd__(self, other):
-        old_n = self.n
-        self.n += other.n
-        self.mean = (old_n * self.mean + other.n * other.mean) / self.n
-
+        self._helper.iadd(other._helper)
         return self
 
     def __add__(self, other):
-        result = copy.deepcopy(self)
+        result = Mean()
+        result._helper.copy(self._helper)
         result += other
 
         return result
 
     def __isub__(self, other):
-        old_n = self.n
-        self.n -= other.n
-
-        if self.n > 0:
-            self.mean = (old_n * self.mean - other.n * other.mean) / self.n
-        else:
-            self.n = 0.0
-            self.mean = 0.0
-
+        self._helper.isub(other._helper)
         return self
 
     def __sub__(self, other):
-        result = copy.deepcopy(self)
+        result = Mean()
+        result._helper.copy(self._helper)
         result -= other
 
         return result

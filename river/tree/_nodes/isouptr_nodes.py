@@ -41,7 +41,7 @@ class LearningNodeMeanMultiTarget(LearningNodeMean):
 
     @property
     def total_weight(self):
-        return list(self.stats.values())[0].mean.n if self.stats else 0
+        return list(self.stats.values())[0].mean_samples if self.stats else 0
 
 
 class LearningNodeModelMultiTarget(LearningNodeMeanMultiTarget):

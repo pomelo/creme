@@ -300,7 +300,7 @@ class AdaSplitNodeRegressor(SplitNode, AdaNode):
     def leaf_prediction(self, x, *, tree=None):
         # Called in case an emerging categorical feature has no path down the split node to be
         # sorted
-        return self.stats.mean.get()
+        return self.stats.mean
 
     # Override AdaNode
     def kill_tree_children(self, tree):
@@ -346,7 +346,7 @@ def normalize_error(y_true, y_pred, node):
     drift_input = y_true - y_pred
     node._error_normalizer.update(drift_input)
 
-    if node._error_normalizer.mean.n == 1:
+    if node._error_normalizer.mean_samples == 1:
         return 0.5  # The expected error is the normalized mean error
 
     sd = math.sqrt(node._error_normalizer.sigma)

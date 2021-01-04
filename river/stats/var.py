@@ -1,7 +1,7 @@
-import copy
-
 from . import base
 from . import mean
+
+from .var_c import VarC
 
 
 class Var(base.Univariate):
@@ -50,72 +50,90 @@ class Var(base.Univariate):
     """
 
     def __init__(self, ddof=1):
-        self.ddof = ddof
-        self.mean = mean.Mean()
-        self.sigma = 0.0
+        # self.ddof = ddof
+        # self.mean = mean.Mean()
+        # self.sigma = 0.0
+        self._helper = VarC(ddof)
 
     def update(self, x, w=1.0):
-        mean = self.mean.get()
-        self.mean.update(x, w)
-        if self.mean.n > self.ddof:
-            self.sigma += (
-                w * ((x - mean) * (x - self.mean.get()) - self.sigma) / (self.mean.n - self.ddof)
-            )
+        # mean = self.mean.get()
+        # self.mean.update(x, w)
+        # if self.mean.n > self.ddof:
+        #     self.sigma += (
+        #         w * ((x - mean) * (x - self.mean.get()) - self.sigma) / (self.mean.n - self.ddof)
+        #     )
+        self._helper.update(x, w)
         return self
 
     def get(self):
-        return self.sigma
+        return self._helper.sigma
 
     def __iadd__(self, other):
-        if other.mean.n <= self.ddof:
-            return self
-
-        old_n = self.mean.n
-        delta = other.mean.get() - self.mean.get()
-
-        self.mean += other.mean
-        # scale and merge sigma
-        self.sigma = (old_n - self.ddof) * self.sigma + (other.mean.n - other.ddof) * other.sigma
-        # apply correction
-        self.sigma = (self.sigma + (delta * delta) * (old_n * other.mean.n) / self.mean.n) / (
-            self.mean.n - self.ddof
-        )
-
+        # if other.mean.n <= self.ddof:
+        #     return self
+        #
+        # old_n = self.mean.n
+        # delta = other.mean.get() - self.mean.get()
+        #
+        # self.mean += other.mean
+        # # scale and merge sigma
+        # self.sigma = (old_n - self.ddof) * self.sigma + (other.mean.n - other.ddof) * other.sigma
+        # # apply correction
+        # self.sigma = (self.sigma + (delta * delta) * (old_n * other.mean.n) / self.mean.n) / (
+        #     self.mean.n - self.ddof
+        # )
+        self._helper.iadd(other._helper)
         return self
 
     def __add__(self, other):
-        result = copy.deepcopy(self)
+        # result = copy.deepcopy(self)
+        result = Var()
+        result._helper.copy(self._helper)
         result += other
 
         return result
 
     def __isub__(self, other):
-        old_n = self.mean.n
-        delta = 0.0
-
-        self.mean -= other.mean
-
-        if self.mean.n > 0 and self.mean.n > self.ddof:
-            delta = other.mean.get() - self.mean.get()
-            # scale both sigma and take the difference
-            self.sigma = (old_n - self.ddof) * self.sigma - (
-                other.mean.n - other.ddof
-            ) * other.sigma
-            # apply the correction
-            self.sigma = (self.sigma - (delta * delta) * (self.mean.n * other.mean.n) / old_n) / (
-                self.mean.n - self.ddof
-            )
-
-        else:
-            self.sigma = 0.0
-
+        # old_n = self.mean.n
+        # delta = 0.0
+        #
+        # self.mean -= other.mean
+        #
+        # if self.mean.n > 0 and self.mean.n > self.ddof:
+        #     delta = other.mean.get() - self.mean.get()
+        #     # scale both sigma and take the difference
+        #     self.sigma = (old_n - self.ddof) * self.sigma - (
+        #         other.mean.n - other.ddof
+        #     ) * other.sigma
+        #     # apply the correction
+        #     self.sigma = (self.sigma - (delta * delta) * (self.mean.n * other.mean.n) / old_n) / (
+        #         self.mean.n - self.ddof
+        #     )
+        #
+        # else:
+        #     self.sigma = 0.0
+        self._helper.isub(other._helper)
         return self
 
     def __sub__(self, other):
-        result = copy.deepcopy(self)
+        # result = copy.deepcopy(self)
+        result = Var()
+        result._helper.copy(self._helper)
         result -= other
 
         return result
+
+    @property
+    def mean_samples(self):
+        return self._helper.mean_samples
+
+    @property
+    def mean(self):
+        return self._helper.mean_value
+
+    @property
+    def sigma(self):
+        return self._helper.sigma
 
 
 class RollingVar(base.RollingUnivariate):
