@@ -31,7 +31,13 @@ REQUIRES_PYTHON = ">=3.6.0"
 # Package requirements.
 base_packages = ["numpy>=1.18.1", "scipy>=1.4.1", "pandas>=1.0.1"]
 
-compat_packages = base_packages + ["scikit-learn", "scikit-surprise", "sqlalchemy", "torch", "vaex"]
+compat_packages = base_packages + [
+    "scikit-learn",
+    "scikit-surprise",
+    "sqlalchemy",
+    "torch",
+    "vaex",
+]
 
 dev_packages = base_packages + [
     "asv",
@@ -84,7 +90,11 @@ setuptools.setup(
     url=URL,
     packages=setuptools.find_packages(exclude=("tests", "scikit-multiflow")),
     install_requires=base_packages,
-    extras_require={"dev": dev_packages, "compat": compat_packages, "docs": docs_packages},
+    extras_require={
+        "dev": dev_packages,
+        "compat": compat_packages,
+        "docs": docs_packages,
+    },
     include_package_data=True,
     license="BSD-3",
     classifiers=[
@@ -108,14 +118,22 @@ setuptools.setup(
                 libraries=[] if platform.system() == "Windows" else ["m"],
             )
         ],
-        compiler_directives={"language_level": 3, "binding": True, "embedsignature": True},
+        compiler_directives={
+            "language_level": 3,
+            "binding": True,
+            "embedsignature": True,
+        },
     )
     + [
         setuptools.Extension(
             "river.neighbors.libNearestNeighbor",
             sources=[
                 os.path.join(
-                    "river", "neighbors", "src", "libNearestNeighbor", "nearestNeighbor.cpp"
+                    "river",
+                    "neighbors",
+                    "src",
+                    "libNearestNeighbor",
+                    "nearestNeighbor.cpp",
                 )
             ],
             include_dirs=[get_include()],

@@ -75,7 +75,9 @@ def benchmark(get_X_y, n, get_pp, models, get_metric):
             "Fit time": [format_ns(r.learn_time) for r in results],
             "Average fit time": [format_ns(round(r.learn_time / n)) for r in results],
             "Predict time": [format_ns(r.pred_time) for r in results],
-            "Average predict time": [format_ns(round(r.pred_time / n)) for r in results],
+            "Average predict time": [
+                format_ns(round(r.pred_time / n)) for r in results
+            ],
         }
     )
 
